@@ -59,5 +59,4 @@ async def send_response(message, card_data):
     await message.channel.send(embed=embedded_message)
 
 async def send_error_response(message, error_message):
-    await message.channel.send('¯\_(ツ)_/¯')
-    await message.channel.send(f'Error Message: {error_message}')
+    await message.channel.send("¯\_(ツ)_/¯\nError Message: {0}".format(error_message))
