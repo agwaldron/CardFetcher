@@ -55,8 +55,9 @@ async def send_response(message, card_data):
         return
     front_face = card_data['card_faces'][0]['image_uris']['border_crop']
     back_face = card_data['card_faces'][1]['image_uris']['border_crop']
-    await message.channel.send(f'{front_face} {back_face}')
+    await message.channel.send(front_face)
+    await message.channel.send(back_face)
     await message.channel.send(embed=embedded_message)
 
 async def send_error_response(message, error_message):
-    await message.channel.send("¯\_(ツ)_/¯\nError Message: {0}".format(error_message))
+    await message.channel.send('¯\_(ツ)_/¯\n{0}'.format(error_message))
