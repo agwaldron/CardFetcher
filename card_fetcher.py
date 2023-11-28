@@ -47,8 +47,9 @@ async def get_card(message, fuzzy_card_name):
 
 async def send_response(message, card_data):
     embedded_message = discord.Embed()
-    embedded_message.description = get_embedded_links(card_data['scryfall_uri'], card_data['type_line'],
-                                                      card_data['legalities'], card_data['name'])
+    embedded_message.description = get_embedded_links(card_data['scryfall_uri'], card_data['legalities'],
+                                                      card_data['type_line'], card_data['oracle_text'],
+                                                      card_data['name'])
     if 'image_uris' in card_data:
         await message.channel.send(card_data['image_uris']['border_crop'])
         await message.channel.send(embed=embedded_message)
@@ -59,17 +60,18 @@ async def send_response(message, card_data):
     await message.channel.send(back_face)
     await message.channel.send(embed=embedded_message)
 
-def get_embedded_links(scryfall_uri, type_line, legalities, card_name):
+def get_embedded_links(scryfall_uri, legalities, type_line, oracle_text, card_name):
     scryfall_link = f'[Scryfall]({scryfall_uri})'
-    if not commander_legal(type_line, legalities):
+    if not commander_legal(legalities, type_line, oracle_text):
         return scryfall_link
     edh_rec_base_url = 'https://edhrec.com/commanders'
     formatted_name = format_card_name_for_url(card_name)
     edh_rec_link = f'[EDHRec]({edh_rec_base_url}/{formatted_name})'
     return f'{scryfall_link}\t|\t{edh_rec_link}'
 
-def commander_legal(type_line, legalities):
-    return 'Legendary Creature' in type_line and legalities['commander'] == 'legal'
+def commander_legal(legalities, type_line, oracle_text):
+    return (legalities['commander'] == 'legal' and
+            ('Legendary Creature' in type_line or 'can be your commander' in oracle_text))
 
 def format_card_name_for_url(card_name):
     replace_spaces = card_name.replace(' ', '-')
